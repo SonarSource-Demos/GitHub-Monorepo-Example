@@ -1,5 +1,6 @@
 import re
 import socket
+import os
 
 SOME_VALUE = 56010
 ANOTHER_VALUE = 61020
@@ -22,9 +23,6 @@ class Person:
         self.religion = religion
 
     def compute_pay(self):
-        # TODO: something
-        # TODO: something
-        # TODO: something
         if self.gender == Person.MALE:
             self.compensation = SOME_VALUE
         elif self.gender == Person.FEMALE:
@@ -55,8 +53,6 @@ def hotspot(ip):
     sock.bind((ip, 9090))
     re.sub(r"(a)(b)(c)", r"\1, \9, \3", "abc")
 
-#TODO
-
 def hotspot2(ip2):
     if ip2 is None:
         ip2 = '192.168.12.56'
@@ -65,3 +61,43 @@ def hotspot2(ip2):
 
 def configure_app(app):
     app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://user:@domain.com"
+
+def execute_command(command):
+    os.system(command)
+
+def insecure_deserialization(data):
+    # Insecure deserialization vulnerability
+    obj = pickle.loads(data)
+    obj.execute()
+
+def sql_injection(username, password):
+    # SQL injection vulnerability
+    query = "SELECT * FROM users WHERE username='%s' AND password='%s'" % (username, password)
+    execute_query(query)
+
+def xss_vulnerability(input):
+    # Cross-Site Scripting (XSS) vulnerability
+    html = "<div>%s</div>" % input
+    return html
+
+def insecure_file_upload(file):
+    # Insecure file upload vulnerability
+    file.save("/var/www/uploads/" + file.filename)
+
+def command_injection(command):
+    # Command injection vulnerability
+    os.system("ping " + command)
+
+def insecure_randomness():
+    # Insecure randomness vulnerability
+    password = random.randint(1000, 9999)
+    return password
+
+a = 1
+while a < 3:
+    if a % 2 == 0:
+        return # Noncompliant: return is outside of a function
+    a += 1
+
+for n in range(5):
+  yield n # Noncompliant: yield is outside of a function
