@@ -1,6 +1,7 @@
 package coverage_metrics;
 
 import java.security.SecureRandom;
+import java.util.List;
 
 /*
 *
@@ -89,14 +90,22 @@ public static boolean all0sAnd1s(String val){
   }
   return all;
 }
-private int generateRandom() throws java.io.UnsupportedEncodingException{
-  SecureRandom sr = new SecureRandom();
-  sr.setSeed(123456L);
-  int v = sr.nextInt(32);
-  
-  sr = new SecureRandom("abcdefghijklmnop".getBytes("us-ascii"));
-  v = sr.nextInt(32);
-  return v;
+
 }
 
+class Entity implements Cloneable { // Noncompliant, using `Cloneable`
+
+  public int value;
+  public List<Entity> children; // deep copy wanted
+
+  @Override
+  public Entity clone() {
+    try {
+      Entity copy = (Entity) super.clone(); // invariant not enforced, because no constructor is caled
+      copy.children = children.stream().map(Entity::clone).toList();
+      return copy;
+    } catch (CloneNotSupportedException e) { // this will not happen due to behavioral contract
+      throw new AssertionError();
+    }
+  }
 }
