@@ -1,29 +1,15 @@
-// Program.cs
+// Test.cs
 using System;
 using System.Net.Http;
-using System.Threading.Tasks;
 
 namespace DonorSearchExample
 {
-    class Program
+    // This class mirrors your DonorAPI/DonorProvider pattern
+    public class DonorSearch
     {
-        // Entry point compatible with older language versions
-        static void Main(string[] args)
+        // This method is what Sonar should flag
+        public void VulnerableSearch(string requestKey, string emailAddress)
         {
-            RunAsync(args).GetAwaiter().GetResult();
-        }
-
-        static async Task RunAsync(string[] args)
-        {
-            if (args.Length < 2)
-            {
-                Console.WriteLine("Usage: dotnet run <requestKey> <emailAddress>");
-                return;
-            }
-
-            string requestKey = args[0];       // untrusted
-            string emailAddress = args[1];     // untrusted
-
             // ----- Mirrors your DonorAPI.cs -----
             string filter = "{" + requestKey + ":'" + emailAddress + "'}";
             Console.WriteLine("Filter: " + filter);
@@ -35,16 +21,16 @@ namespace DonorSearchExample
 
             Console.WriteLine("Calling: " + endpointCustomer);
 
-            // Classic using-statement instead of C# 8 "using var"
+            // Classic using-statement, compatible with C# 7.3
             using (var client = new HttpClient())
             {
                 try
                 {
-                    // This call should be considered the "sink" for tainted data
+                    // This call is the "sink" for the tainted data
                     HttpResponseMessage response =
-                        await client.GetAsync(endpointCustomer);
+                        client.GetAsync(endpointCustomer).Result;
 
-                    string body = await response.Content.ReadAsStringAsync();
+                    string body = response.Content.ReadAsStringAsync().Result;
                     Console.WriteLine("Response received (length): " + body.Length);
                 }
                 catch (Exception ex)
