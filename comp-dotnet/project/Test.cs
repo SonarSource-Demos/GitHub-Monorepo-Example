@@ -7,9 +7,13 @@ namespace DonorSearchExample
 {
     class Program
     {
-        // Simulate untrusted input coming from the "request"
-        // Usage: dotnet run emailField "test@example.com"
-        static async Task Main(string[] args)
+        // Entry point compatible with older language versions
+        static void Main(string[] args)
+        {
+            RunAsync(args).GetAwaiter().GetResult();
+        }
+
+        static async Task RunAsync(string[] args)
         {
             if (args.Length < 2)
             {
@@ -31,19 +35,22 @@ namespace DonorSearchExample
 
             Console.WriteLine("Calling: " + endpointCustomer);
 
-            using var client = new HttpClient();
-            try
+            // Classic using-statement instead of C# 8 "using var"
+            using (var client = new HttpClient())
             {
-                // This call should be considered the "sink" for tainted data
-                HttpResponseMessage response =
-                    await client.GetAsync(endpointCustomer);
+                try
+                {
+                    // This call should be considered the "sink" for tainted data
+                    HttpResponseMessage response =
+                        await client.GetAsync(endpointCustomer);
 
-                string body = await response.Content.ReadAsStringAsync();
-                Console.WriteLine("Response received (length): " + body.Length);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Error during request: " + ex.Message);
+                    string body = await response.Content.ReadAsStringAsync();
+                    Console.WriteLine("Response received (length): " + body.Length);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error during request: " + ex.Message);
+                }
             }
         }
     }
