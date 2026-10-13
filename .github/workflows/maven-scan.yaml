@@ -53,5 +53,5 @@ jobs:
           SONAR_PLUGINS_DOWNLOADONLYREQUIRED: true
         run: |
           cd ./comp-maven
-          mvn -B clean org.jacoco:jacoco-maven-plugin:prepare-agent install org.jacoco:jacoco-maven-plugin:report sonar:sonar
+          mvn -B clean org.jacoco:jacoco-maven-plugin:prepare-agent install org.jacoco:jacoco-maven-plugin:report org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
 
